@@ -17,7 +17,7 @@ import { useMutation } from "react-query";
 import { loginUser } from "../../utils/fetchApi";
 
 export default function Login() {
-  const [_, setCookie] = useCookies(["userToken"]);
+  const [_, setCookie] = useCookies();
   const { mutate, isLoading } = useMutation(loginUser, {
     onSuccess: (data) => {
       console.log("success login: ", data);

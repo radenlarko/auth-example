@@ -1,14 +1,18 @@
 import { Text } from "@chakra-ui/react";
 import Head from "next/head";
+import { useCookies } from "react-cookie";
 import { useQuery } from "react-query";
 import Layout from "../components/Layout";
 import { getTodos } from "../utils/fetchApi";
 
 export default function Home({ todos1 }) {
+  const [cookies] = useCookies();
   const { data } = useQuery(["/todos/1"], getTodos, {
     refetchInterval: 10000,
     initialData: todos1,
   });
+
+  console.log(cookies.userToken)
   return (
     <div>
       <Head>
