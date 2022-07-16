@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import {
   Button,
   Checkbox,
@@ -17,12 +18,14 @@ import { useMutation } from "react-query";
 import { loginUser } from "../../utils/fetchApi";
 
 export default function Login() {
+  const router = useRouter();
   const [_, setCookie] = useCookies();
   const { mutate, isLoading } = useMutation(loginUser, {
     onSuccess: (data) => {
       console.log("success login: ", data);
-      setCookie("userToken", data.token, {path: "/"});
-      localStorage.setItem("userData", JSON.stringify(data.user))
+      setCookie("userToken", data.token, { path: "/" });
+      localStorage.setItem("userData", JSON.stringify(data.user));
+      router.push("/");
     },
     onError: (err) => {
       if (err.response?.data) {
@@ -39,6 +42,7 @@ export default function Login() {
     handleSubmit,
     formState: { errors },
   } = useForm();
+
   const onSubmit = (data) => mutate(data);
 
   return (

@@ -1,4 +1,5 @@
-import { Text } from "@chakra-ui/react";
+import { useRouter } from "next/router";
+import { Text, Button } from "@chakra-ui/react";
 import Head from "next/head";
 import { useCookies } from "react-cookie";
 import { useQuery } from "react-query";
@@ -6,13 +7,20 @@ import Layout from "../components/Layout";
 import { getTodos } from "../utils/fetchApi";
 
 export default function Home({ todos1 }) {
-  const [cookies] = useCookies();
+  const [cookies, _, removeCookie] = useCookies();
   const { data } = useQuery(["/todos/1"], getTodos, {
     refetchInterval: 10000,
     initialData: todos1,
   });
 
-  console.log(cookies.userToken)
+  const router = useRouter();
+
+  const handleLogout = () => {
+    removeCookie("userToken");
+    router.replace("/auth/login");
+  };
+
+  console.log(cookies.userToken);
   return (
     <div>
       <Head>
@@ -23,6 +31,7 @@ export default function Home({ todos1 }) {
 
       <Layout>
         <Text>Home page</Text>
+        <Button onClick={handleLogout}>Logout</Button>
         <pre>
           <code>{JSON.stringify(data, null, 2)}</code>
         </pre>
@@ -33,5 +42,5 @@ export default function Home({ todos1 }) {
 
 export const getStaticProps = async () => {
   const todos1 = await getTodos();
-  return { props: { todos1: {...todos1, nama: "Yos Sularko"} } };
+  return { props: { todos1: { ...todos1, nama: "Yos Sularko" } } };
 };
