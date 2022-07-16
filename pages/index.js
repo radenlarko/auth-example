@@ -1,7 +1,14 @@
+import { Text } from "@chakra-ui/react";
 import Head from "next/head";
+import { useQuery } from "react-query";
 import Layout from "../components/Layout";
+import { getTodos } from "../utils/fetchApi";
 
-export default function Home() {
+export default function Home({ todos1 }) {
+  const { data } = useQuery(["/todos/1"], getTodos, {
+    refetchInterval: 10000,
+    initialData: todos1,
+  });
   return (
     <div>
       <Head>
@@ -10,7 +17,17 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Layout>Home Page</Layout>
+      <Layout>
+        <Text>Home page</Text>
+        <pre>
+          <code>{JSON.stringify(data, null, 2)}</code>
+        </pre>
+      </Layout>
     </div>
   );
 }
+
+export const getStaticProps = async () => {
+  const todos1 = await getTodos();
+  return { props: { todos1: {...todos1, nama: "Yos Sularko"} } };
+};
