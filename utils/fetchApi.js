@@ -1,23 +1,19 @@
 import axios from "axios";
 
 export const fetchApi = axios.create({
-  baseURL: "https://jsonplaceholder.typicode.com",
+  baseURL: "http://192.168.0.5/api",
 });
 
 export const getTodos = async () => {
-  try {
-    const response = await fetchApi.get("/todos/1");
+  const { data } = await axios.get(
+    "https://jsonplaceholder.typicode.com/todos/1"
+  );
 
-    if (response.status !== 200) {
-      return Promise.reject(response.data);
-    }
+  return data;
+};
 
-    return Promise.resolve(response.data);
-  } catch (err) {
-    if (err.response) {
-      return err.response;
-    }
+export const loginUser = async (data) => {
+  const response = await fetchApi.post("/auth/login", data);
 
-    return err;
-  }
+  return response.data;
 };

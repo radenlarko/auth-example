@@ -11,15 +11,35 @@ import {
   Stack,
   Image,
 } from "@chakra-ui/react";
+import { useCookies } from "react-cookie";
 import { useForm } from "react-hook-form";
+import { useMutation } from "react-query";
+import { loginUser } from "../../utils/fetchApi";
 
 export default function Login() {
+  const [_, setCookie] = useCookies(["userToken"]);
+  const { mutate, isLoading } = useMutation(loginUser, {
+    onSuccess: (data) => {
+      console.log("success login: ", data);
+      setCookie("userToken", data.token, {path: "/"});
+      localStorage.setItem("userData", JSON.stringify(data.user))
+    },
+    onError: (err) => {
+      if (err.response?.data) {
+        console.log("error login: ", err.response.data);
+        return;
+      }
+
+      console.log("error: ", err);
+    },
+  });
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const onSubmit = (data) => console.log(data);
+  const onSubmit = (data) => mutate(data);
 
   return (
     <Stack minH={"100vh"} direction={{ base: "column", md: "row" }}>
@@ -61,7 +81,12 @@ export default function Login() {
                 <Checkbox>Remember me</Checkbox>
                 <Link color={"blue.500"}>Forgot password?</Link>
               </Stack>
-              <Button colorScheme={"blue"} variant={"solid"} type="submit">
+              <Button
+                colorScheme={"blue"}
+                variant={"solid"}
+                type="submit"
+                isLoading={isLoading}
+              >
                 Sign in
               </Button>
             </Stack>
