@@ -28,6 +28,14 @@ export const getUsers = async () => {
   return data;
 };
 
+export const getPassenger = async (page) => {
+  const { data } = await axios.get(
+    `https://api.instantwebtools.net/v1/passenger?page=${page}&size=10`
+  );
+
+  return data;
+};
+
 export const loginUser = async (data) => {
   const response = await fetchApi.post("/auth/login", data);
 
