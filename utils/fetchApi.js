@@ -12,6 +12,22 @@ export const getTodos = async () => {
   return data;
 };
 
+export const getPosts = async () => {
+  const { data } = await axios.get(
+    "https://jsonplaceholder.typicode.com/posts"
+  );
+
+  return data;
+};
+
+export const getUsers = async () => {
+  const { data } = await axios.get(
+    "https://jsonplaceholder.typicode.com/users"
+  );
+
+  return data;
+};
+
 export const loginUser = async (data) => {
   const response = await fetchApi.post("/auth/login", data);
 

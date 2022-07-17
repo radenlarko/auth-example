@@ -4,14 +4,30 @@ import Head from "next/head";
 import { useCookies } from "react-cookie";
 import { useQuery } from "react-query";
 import Layout from "../components/Layout";
-import { getTodos } from "../utils/fetchApi";
+import { getPosts, getTodos, getUsers } from "../utils/fetchApi";
 
-export default function Home({ todos1 }) {
+export default function Home({ todos1, posts, users }) {
   const [cookies, _, removeCookie] = useCookies();
-  const { data } = useQuery(["/todos/1"], getTodos, {
+  const { data, isSuccess } = useQuery(["/todos/1"], getTodos, {
     refetchInterval: 10000,
     initialData: todos1,
   });
+  const { data: dataPosts, isSuccess: isSuccessPosts } = useQuery(
+    ["/posts"],
+    getPosts,
+    {
+      refetchInterval: 15000,
+      initialData: posts,
+    }
+  );
+  const { data: dataUsers, isSuccess: isSuccessUsers } = useQuery(
+    ["/users"],
+    getUsers,
+    {
+      refetchInterval: 12000,
+      initialData: users,
+    }
+  );
 
   const router = useRouter();
 
@@ -32,9 +48,24 @@ export default function Home({ todos1 }) {
       <Layout>
         <Text>Home page</Text>
         <Button onClick={handleLogout}>Logout</Button>
-        <pre>
-          <code>{JSON.stringify(data, null, 2)}</code>
-        </pre>
+        <Text>Todos</Text>
+        {isSuccess && (
+          <pre>
+            <code>{JSON.stringify(data, null, 2)}</code>
+          </pre>
+        )}
+        <Text>Posts</Text>
+        {isSuccessPosts && (
+          <pre>
+            <code>{JSON.stringify(dataPosts[0], null, 2)}</code>
+          </pre>
+        )}
+        <Text>Users</Text>
+        {isSuccessUsers && (
+          <pre>
+            <code>{JSON.stringify(dataUsers[0], null, 2)}</code>
+          </pre>
+        )}
       </Layout>
     </div>
   );
@@ -42,5 +73,9 @@ export default function Home({ todos1 }) {
 
 export const getStaticProps = async () => {
   const todos1 = await getTodos();
-  return { props: { todos1: { ...todos1, nama: "Yos Sularko" } } };
+  const posts = await getPosts();
+  const users = await getUsers();
+  return {
+    props: { todos1: { ...todos1, nama: "Yos Sularko" }, posts, users },
+  };
 };
