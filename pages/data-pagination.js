@@ -75,7 +75,7 @@ const DataPagination = ({ dataPassengers }) => {
 export default DataPagination;
 
 export const getStaticProps = async () => {
-  const dataPassengers = await getPassenger();
+  const dataPassengers = await getPassenger(0);
   return {
     props: { dataPassengers },
   };
